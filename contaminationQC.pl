@@ -163,10 +163,8 @@ else {
 
 # Output result to a json file
 my $json_field;
-if (looks_like_number($contamination_level)) {
-	$json_field->{'CONTAMINATION_IDX'} = sprintf '%.1f', $contamination_level;
-}
-else {$json_field->{'CONTAMINATION_IDX'} = $contamination_level;}
+
+$json_field->{'CONTAMINATION_IDX'} = $contamination_level;
 
 open (OUTPUT, '>', $output)
 	or die "Cannot open file: $output: $!\n";
@@ -174,6 +172,10 @@ open (OUTPUT, '>', $output)
 print OUTPUT encode_json($json_field);
 close OUTPUT;
 
+unlink $xy_bed
+	or die "Can't remove $xy_bed: $!\n";
+unlink $aut_bed
+	or die "Can't remove $aut_bed: $!\n";
 
 ##################### SUBROUTINES ########################
 
