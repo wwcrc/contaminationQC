@@ -147,24 +147,28 @@ close AUT;
 
 ### Select appropriate flows to run ###
 
+my $json_field;
+
 if (lc($gender) eq 'female') {
 	print "Sample is: $gender, running Y_based routine\n" if $verbose; #verbose only
 	$contamination_level = Y_based($xy_bed, $bamfile, $Ychrom, $aut_bed, $MQ);
+	$json_field->{'CONTAMINATION_IDX'} = $contamination_level;
 }
 
 elsif (lc($gender) eq 'male') {
 	print "Sample is: $gender, running X_based routine\n" if $verbose; #verbose only
 	$contamination_level = X_based($xy_bed, $bamfile, $Xchrom, $BAQ);
+	$json_field->{'CONTAMINATION_IDX'} = $contamination_level;
 }
 else {
-	print STDERR "Sample is: $gender, evaluation not possible.\n";
-	$contamination_level = 'NA';
+	print STDERR "Sample is: $gender, running both metrics.\n";
+    my $cont_if_male = X_based($xy_bed, $bamfile, $Xchrom, $BAQ);
+    my $cont_if_female = Y_based($xy_bed, $bamfile, $Ychrom, $aut_bed, $MQ);
+	$json_field->{'CONTAMINATION_IDX_M'} = $cont_if_male;
+	$json_field->{'CONTAMINATION_IDX_F'} = $cont_if_female;
 }
 
 # Output result to a json file
-my $json_field;
-
-$json_field->{'CONTAMINATION_IDX'} = $contamination_level;
 
 open (OUTPUT, '>', $output)
 	or die "Cannot open file: $output: $!\n";
@@ -176,6 +180,7 @@ unlink $xy_bed
 	or die "Can't remove $xy_bed: $!\n";
 unlink $aut_bed
 	or die "Can't remove $aut_bed: $!\n";
+
 
 ##################### SUBROUTINES ########################
 
