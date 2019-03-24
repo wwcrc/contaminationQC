@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 # contamination_detector.pl - A Perl script to look for contamination in targeted sequencing experiments.
 # Copyright (C) 2015 14MG, 2017 University of Glasgow
@@ -30,7 +30,7 @@ use Getopt::Long;
 use JSON;
 use Scalar::Util qw(looks_like_number);
 
-my $version = '1.0';
+my $version = '1.1';
 
 # Defaults
 
@@ -161,9 +161,9 @@ elsif (lc($gender) eq 'male') {
 	$json_field->{'CONTAMINATION_IDX'} = $contamination_level;
 }
 else {
-	print STDERR "Sample is: $gender, running both metrics.\n";
-    my $cont_if_male = X_based($xy_bed, $bamfile, $Xchrom, $BAQ);
-    my $cont_if_female = Y_based($xy_bed, $bamfile, $Ychrom, $aut_bed, $MQ);
+	print STDERR "Sample is: $gender, running both metrics\n" if $verbose; #verbose only
+	my $cont_if_male = X_based($xy_bed, $bamfile, $Xchrom, $BAQ);
+	my $cont_if_female = Y_based($xy_bed, $bamfile, $Ychrom, $aut_bed, $MQ);
 	$json_field->{'CONTAMINATION_IDX_M'} = $cont_if_male;
 	$json_field->{'CONTAMINATION_IDX_F'} = $cont_if_female;
 }
