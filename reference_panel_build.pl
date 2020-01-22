@@ -51,13 +51,11 @@ or die "Error in command line arguments. Try --help\n";
 my @files = @ARGV; # can be bam/cram format
 
 if (scalar @ARGV <= 1) {
-	print STDERR "Expected multiple bam/cram files as input, got @ARGV\n";
-	exit 1;
+	die "Expected multiple bam/cram files as input, got @ARGV\n";
 }
 
 unless (defined $manifest && defined $config && defined $bed && defined $output) {
-	print STDERR "Missing one or more parameters. Try --help\n";
-    exit 1;
+	die "Missing one or more parameters. Try --help\n";
 }
 
 
@@ -125,7 +123,7 @@ close GENDERS;
 ### Split bed file into temporary XY and autosome bed files ###
 
 open (BED, '<', $bed)
-	or die "Cannot open file for reading: $manifest $!\n";
+	or die "Cannot open file for reading: $bed: $!\n";
 open (XY, '>', $xy_bed)
 	or die "Cannot open file for writing: $xy_bed $!\n";
 open (AUT, '>', $aut_bed)
@@ -160,8 +158,7 @@ foreach my $file (@files) {
         push (@X_values, $X_level);
     }
     else {
-        print STDERR "$file had an unrecognised gender: $samples{$file}\n";
-        exit 1;
+        die "$file had an unrecognised gender: $samples{$file}\n";
     }
 }
 
